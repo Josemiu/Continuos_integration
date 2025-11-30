@@ -71,8 +71,12 @@ class MembershipManager:
             discount_amount = total_cost * self.GROUP_DISCOUNT_RATE
             total_cost -= discount_amount
             print(f"NOTIFICACIÓN: Se aplicó un {self.GROUP_DISCOUNT_RATE * 100}% de descuento grupal. Ahorro: ${discount_amount:.2f}")
-        # 5. Aplicar Descuento Fijo Adicional de $20.00
-        # Solo se aplica si NO se aplicó el descuento del 10% y hay 2 o 3 miembros
+            
+            # 5. Aplicar Descuento Fijo Adicional de $20.00 cuando se aplica descuento grupal
+            fixed_discount = self.FIXED_GROUP_DISCOUNT
+            total_cost -= fixed_discount
+            print(f"NOTIFICACIÓN: Se aplicó un descuento fijo adicional de ${fixed_discount:.2f}.")
+        # 5b. Aplicar Descuento Fijo solo para 2-3 miembros sin descuento grupal
         elif num_members >= 2 and num_members <= 3:
             fixed_discount = self.FIXED_GROUP_DISCOUNT
             total_cost -= fixed_discount
