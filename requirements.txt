@@ -1,0 +1,5 @@
+pip install -r requirements.txt # Instala Pytest
+pip install pytest             # (Este paso es redundante si el anterior funciona, pero no hace daño)
+pytest --junitxml=test-results.xml # Ejecuta Pytest
+
+El comando `pip install -r requirements.txt` lee ese archivo, ve la palabra `pytest`, y automáticamente lo descarga e instala en el entorno de Jenkins. Sin ese archivo, Jenkins no sabría cómo correr el comando `pytest`.
