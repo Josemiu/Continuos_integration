@@ -61,9 +61,11 @@ class MembershipManager:
         total_cost = (base_cost_per_member + features_cost_per_member) * num_members
 
         # 3. Aplicar Recargo (Surcharge) (Requisito 6) - Se aplica primero.
+        surcharge_applied = False
         if self.SURCHARGE_FEATURE in features:
             surcharge_amount = total_cost * self.SURCHARGE_RATE
             total_cost += surcharge_amount
+            surcharge_applied = True
             print(f"NOTIFICACIÓN: Se aplicó un recargo del {self.SURCHARGE_RATE * 100}% por '{self.SURCHARGE_FEATURE}'. Recargo: ${surcharge_amount:.2f}")
 
         # 4. Aplicar Descuento Grupal (Group Discount 10%) (Requisito 5)
@@ -73,8 +75,10 @@ class MembershipManager:
             print(f"NOTIFICACIÓN: Se aplicó un {self.GROUP_DISCOUNT_RATE * 100}% de descuento grupal. Ahorro: ${discount_amount:.2f}")
 
         # 5. Aplicar Descuento Fijo Adicional de $20.00
-        # Se aplica solo para 2-3 miembros (con o sin descuento grupal)
-        if num_members >= 2 and num_members <= 3:
+        # Se aplica en dos casos:
+        # - 2-3 miembros (siempre)
+        # - 4+ miembros SOLO si hay recargo (surcharge_applied)
+        if (num_members >= 2 and num_members <= 3) or (num_members >= 4 and surcharge_applied):
             fixed_discount = self.FIXED_GROUP_DISCOUNT
             total_cost -= fixed_discount
             if apply_group_discount:
