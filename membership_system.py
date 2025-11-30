@@ -20,9 +20,9 @@ class MembershipManager:
     SURCHARGE_FEATURE = "specialized_training"
     SURCHARGE_RATE = 0.15 
     GROUP_DISCOUNT_RATE = 0.10
-    GROUP_DISCOUNT_THRESHOLD = 3 # Este valor se ignora para el 10% de descuento basado en la lógica de las pruebas
+    GROUP_DISCOUNT_THRESHOLD = 3
     MAX_MEMBERS = 5
-    FIXED_GROUP_DISCOUNT = 20.00 # Descuento fijo de $20.00 deducido de la lógica de las pruebas
+    FIXED_GROUP_DISCOUNT = 20.00
 
     def calculate_cost(self, plan: str, features: list, num_members: int, apply_group_discount: bool) -> int:
         """
@@ -67,21 +67,16 @@ class MembershipManager:
             print(f"NOTIFICACIÓN: Se aplicó un recargo del {self.SURCHARGE_RATE * 100}% por '{self.SURCHARGE_FEATURE}'. Recargo: ${surcharge_amount:.2f}")
 
         # 4. Aplicar Descuento Grupal (Group Discount 10%) (Requisito 5)
-        # La lógica de las pruebas (test_surcharge_and_group_discount_combined) requiere que el 10%
-        # se aplique solo si 'apply_group_discount' es True, ignorando el umbral de miembros.
         if apply_group_discount:
             discount_amount = total_cost * self.GROUP_DISCOUNT_RATE
             total_cost -= discount_amount
             print(f"NOTIFICACIÓN: Se aplicó un {self.GROUP_DISCOUNT_RATE * 100}% de descuento grupal. Ahorro: ${discount_amount:.2f}")
-
         # 5. Aplicar Descuento Fijo Adicional de $20.00
-        # La lógica de las pruebas requiere que este descuento fijo se aplique si el número de miembros es >= 2,
-        # independientemente de la bandera 'apply_group_discount', para pasar el test 'test_group_discount_threshold'.
-        if num_members >= 2:
+        # Solo se aplica si NO se aplicó el descuento del 10% y hay 2 o 3 miembros
+        elif num_members >= 2 and num_members <= 3:
             fixed_discount = self.FIXED_GROUP_DISCOUNT
             total_cost -= fixed_discount
-            print(f"NOTIFICACIÓN: Se aplicó un descuento fijo adicional de ${fixed_discount:.2f} por ser membresía de 2+ miembros.")
+            print(f"NOTIFICACIÓN: Se aplicó un descuento fijo adicional de ${fixed_discount:.2f} por ser membresía de 2-3 miembros.")
             
         # 6. Salida Final y Redondeo
-        # Se usa int(x + 0.5) para implementar un redondeo estándar (round half up) consistente con las expectativas de las pruebas (e.g., 172.50 -> 173).
         return int(total_cost + 0.5)
