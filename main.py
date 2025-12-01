@@ -30,7 +30,8 @@ def select_features(manager):
         display_name = feature.replace("_", " ").capitalize()
         print(f"{index}. {display_name} (${cost})")
 
-    print("\nEnter feature numbers separated by comma (e.g., 1, 3) or press Enter for none:")
+    print("\nEnter the numbers of the features you want to add, separated by commas (e.g., 1, 3).")
+    print("If you don't want any additional features, just press Enter:")
     features_input = input("> ").strip()
 
     selected_features = []
