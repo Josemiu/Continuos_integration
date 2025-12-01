@@ -1,23 +1,32 @@
+"""
+Unit tests for the MembershipManager class.
+"""
+# pylint: disable=redefined-outer-name
+
 import pytest
 from membership_system import MembershipManager
 
 @pytest.fixture
 def manager():
+    """Fixture to provide a MembershipManager instance."""
     return MembershipManager()
 
 def test_basic_plan_single_member(manager):
+    """Test basic plan cost for a single member."""
     # Plan: Basic ($50)
     # Members: 1
     # Total: 50
     assert manager.calculate_cost("basic", [], 1) == 50
 
 def test_family_plan_single_member(manager):
+    """Test family plan cost for a single member."""
     # Plan: Family ($150)
     # Members: 1
     # Total: 150
     assert manager.calculate_cost("family", [], 1) == 150
 
 def test_premium_surcharge(manager):
+    """Test premium surcharge application."""
     # Plan: Premium ($100)
     # Feature: specialized_training ($50) -> Premium feature
     # Members: 1
@@ -27,6 +36,7 @@ def test_premium_surcharge(manager):
     assert manager.calculate_cost("premium", ["specialized_training"], 1) == 173
 
 def test_group_discount_basic(manager):
+    """Test group discount for basic plan."""
     # Plan: Basic ($50)
     # Members: 2 (Group discount 10% applies)
     # Base: 50 * 2 = 100
@@ -35,6 +45,7 @@ def test_group_discount_basic(manager):
     assert manager.calculate_cost("basic", [], 2) == 90
 
 def test_special_offer_20_off(manager):
+    """Test special offer discount ($20 off)."""
     # Plan: Premium ($100)
     # Members: 3 (Group discount 10%)
     # Base: 100 * 3 = 300
@@ -44,6 +55,7 @@ def test_special_offer_20_off(manager):
     assert manager.calculate_cost("premium", [], 3) == 250
 
 def test_special_offer_50_off(manager):
+    """Test special offer discount ($50 off)."""
     # Plan: Family ($150)
     # Members: 3 (Group discount 10%)
     # Base: 150 * 3 = 450
@@ -53,6 +65,7 @@ def test_special_offer_50_off(manager):
     assert manager.calculate_cost("family", [], 3) == 355
 
 def test_combined_surcharge_group_special(manager):
+    """Test combination of surcharge, group discount, and special offer."""
     # Plan: Premium ($100)
     # Feature: specialized_training ($50) -> Surcharge
     # Members: 2
@@ -65,11 +78,14 @@ def test_combined_surcharge_group_special(manager):
     assert manager.calculate_cost("premium", ["specialized_training"], 2) == 291
 
 def test_invalid_member_count(manager):
+    """Test validation for invalid member counts."""
     assert manager.calculate_cost("basic", [], 0) == -1
     assert manager.calculate_cost("basic", [], -5) == -1
 
 def test_invalid_plan(manager):
+    """Test validation for invalid plan names."""
     assert manager.calculate_cost("super_gold", [], 1) == -1
 
 def test_invalid_feature(manager):
+    """Test validation for invalid features."""
     assert manager.calculate_cost("basic", ["sauna"], 1) == -1

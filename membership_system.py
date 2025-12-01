@@ -1,9 +1,12 @@
-import math
+"""
+System for managing gym memberships, calculating costs, and applying discounts.
+"""
 
 class MembershipManager:
     """
     Manages gym membership costs, additional features, and discounts.
     """
+    # pylint: disable=too-few-public-methods
     
     PLAN_COSTS = {
         "basic": 50,
@@ -20,7 +23,7 @@ class MembershipManager:
     
     # Premium features that trigger a surcharge
     PREMIUM_FEATURES = {"specialized_training", "exclusive_access"}
-    SURCHARGE_RATE = 0.15 
+    SURCHARGE_RATE = 0.15
     
     GROUP_DISCOUNT_RATE = 0.10
     GROUP_MIN_MEMBERS = 2
@@ -62,7 +65,8 @@ class MembershipManager:
         total_cost = (base_cost + features_cost) * num_members
 
         # 3. Premium Surcharge (Requisito 6)
-        # "Apply an additional 15% surcharge to the total cost of memberships including premium features."
+        # "Apply an additional 15% surcharge to the total cost of memberships
+        # including premium features."
         has_premium = any(f in self.PREMIUM_FEATURES for f in features)
         if has_premium:
             total_cost *= (1 + self.SURCHARGE_RATE)

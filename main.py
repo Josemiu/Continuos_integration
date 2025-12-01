@@ -1,7 +1,14 @@
+"""
+Main entry point for the Gym Membership System CLI.
+"""
 import sys
 from membership_system import MembershipManager
 
 def main():
+    """
+    Main function to run the CLI application.
+    Prompts user for inputs and displays results.
+    """
     manager = MembershipManager()
     print("=== Gym Membership System ===")
 
@@ -40,11 +47,6 @@ def main():
         return -1
 
     # 4. User Confirmation
-    # Calculate preliminary cost for display
-    # Note: We need to display details before final confirmation. 
-    # The calculate_cost method returns the final integer, but for confirmation 
-    # we might want to show the user what they picked.
-    
     print("\n--- Confirmation ---")
     print(f"Plan: {selected_plan}")
     print(f"Features: {', '.join(selected_features) if selected_features else 'None'}")
@@ -61,9 +63,9 @@ def main():
     if total_cost != -1:
         print(f"\nTotal Membership Cost: ${total_cost}")
         return total_cost
-    else:
-        print("Error calculating cost.")
-        return -1
+
+    print("Error calculating cost.")
+    return -1
 
 if __name__ == "__main__":
     sys.exit(main())
