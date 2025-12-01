@@ -8,7 +8,7 @@ def select_plan(manager):
     """Handles the interactive selection of a membership plan."""
     print("\nAvailable Plans:")
     plans_list = list(manager.PLAN_COSTS.items())
-    
+
     for index, (plan, cost) in enumerate(plans_list, 1):
         print(f"{index}. {plan.capitalize()} (${cost})")
 
@@ -25,14 +25,14 @@ def select_features(manager):
     """Handles the interactive selection of additional features."""
     print("\nAvailable Features:")
     features_list = list(manager.FEATURE_COSTS.items())
-    
+
     for index, (feature, cost) in enumerate(features_list, 1):
         display_name = feature.replace("_", " ").capitalize()
         print(f"{index}. {display_name} (${cost})")
-    
+
     print("\nEnter feature numbers separated by comma (e.g., 1, 3) or press Enter for none:")
     features_input = input("> ").strip()
-    
+
     selected_features = []
     if features_input:
         input_parts = [p.strip() for p in features_input.split(",") if p.strip()]
@@ -76,15 +76,15 @@ def main():
     # 2. Confirmation
     print("\n--- Confirmation ---")
     print(f"Plan: {selected_plan.capitalize()}")
-    
+
     if selected_features:
         formatted_features = [f.replace("_", " ").capitalize() for f in selected_features]
         print(f"Features: {', '.join(formatted_features)}")
     else:
         print("Features: None")
-        
+
     print(f"Members: {num_members}")
-    
+
     confirm = input("\nConfirm these details? (y/n): ").strip().lower()
     if confirm != 'y':
         print("Operation cancelled by user.")
