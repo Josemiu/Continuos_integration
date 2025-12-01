@@ -2,89 +2,86 @@ import math
 
 class MembershipManager:
     """
-    Gestión de costos de planes de membresía y funciones adicionales.
-    Implementa la lógica de descuentos grupales, recargos y validaciones.
+    Manages gym membership costs, additional features, and discounts.
     """
     
     PLAN_COSTS = {
         "basic": 50,
-        "premium": 100
+        "premium": 100,
+        "family": 150
     }
     
     FEATURE_COSTS = {
         "personal_training": 35,
-        "specialized_training": 50
+        "group_classes": 20,
+        "specialized_training": 50,
+        "exclusive_access": 40
     }
     
-    # specialized_training requiere recargo del 15% (Requisito 6)
-    SURCHARGE_FEATURE = "specialized_training"
+    # Premium features that trigger a surcharge
+    PREMIUM_FEATURES = {"specialized_training", "exclusive_access"}
     SURCHARGE_RATE = 0.15 
+    
     GROUP_DISCOUNT_RATE = 0.10
-    GROUP_DISCOUNT_THRESHOLD = 3
-    MAX_MEMBERS = 5
-    FIXED_GROUP_DISCOUNT = 20.00
+    GROUP_MIN_MEMBERS = 2
+    
+    # Special offers thresholds and discounts
+    SPECIAL_OFFERS = [
+        (400, 50),  # If > 400, discount 50
+        (200, 20)   # If > 200, discount 20
+    ]
 
-    def calculate_cost(self, plan: str, features: list, num_members: int, apply_group_discount: bool) -> int:
+    def calculate_cost(self, plan: str, features: list, num_members: int) -> int:
         """
-        Calcula el costo total de la membresía.
+        Calculates the total membership cost based on requirements.
 
         Args:
-            plan (str): El tipo de plan de membresía.
-            features (list): Lista de características adicionales.
-            num_members (int): Número de miembros.
-            apply_group_discount (bool): Si se debe aplicar el descuento grupal (10%).
+            plan (str): The membership plan type.
+            features (list): List of additional features.
+            num_members (int): Number of members signing up.
 
         Returns:
-            int: Costo total redondeado al entero más cercano, o -1 si es inválido.
+            int: Total cost rounded to the nearest integer, or -1 if invalid.
         """
-
-        # 1. Validación de Entrada (Requisito 9: Devuelve -1 si la entrada no es válida)
-        if num_members <= 0 or num_members > self.MAX_MEMBERS:
-            print("MENSAJE DE ERROR: Número de miembros inválido.")
+        # 1. Validation
+        if num_members <= 0:
             return -1
         
         if plan not in self.PLAN_COSTS:
-            print(f"MENSAJE DE ERROR: Plan de membresía '{plan}' no válido.")
             return -1
 
         for feature in features:
             if feature not in self.FEATURE_COSTS:
-                print(f"MENSAJE DE ERROR: Característica adicional '{feature}' no disponible.")
                 return -1
 
-        # Si todo es válido, calculamos el costo
+        # 2. Base Cost Calculation
+        base_cost = self.PLAN_COSTS[plan]
+        features_cost = sum(self.FEATURE_COSTS[f] for f in features)
         
-        # 2. Cálculo del Costo Base por Miembro
-        base_cost_per_member = self.PLAN_COSTS[plan]
-        features_cost_per_member = sum(self.FEATURE_COSTS[f] for f in features)
+        # Total per group before discounts/surcharges
+        total_cost = (base_cost + features_cost) * num_members
+
+        # 3. Premium Surcharge (Requisito 6)
+        # "Apply an additional 15% surcharge to the total cost of memberships including premium features."
+        has_premium = any(f in self.PREMIUM_FEATURES for f in features)
+        if has_premium:
+            total_cost *= (1 + self.SURCHARGE_RATE)
+
+        # 4. Group Discount (Requisito 4)
+        # "If two or more members sign up... apply a 10% discount"
+        if num_members >= self.GROUP_MIN_MEMBERS:
+            total_cost *= (1 - self.GROUP_DISCOUNT_RATE)
+
+        # 5. Special Offer Discounts (Requisito 5)
+        # Checked against the total cost calculated so far
+        discount_to_apply = 0
+        for threshold, discount in self.SPECIAL_OFFERS:
+            if total_cost > threshold:
+                discount_to_apply = discount
+                break # Apply only the highest applicable discount
         
-        total_cost = (base_cost_per_member + features_cost_per_member) * num_members
+        total_cost -= discount_to_apply
 
-        # 3. Aplicar Recargo (Surcharge) (Requisito 6) - Se aplica primero.
-        surcharge_applied = False
-        if self.SURCHARGE_FEATURE in features:
-            surcharge_amount = total_cost * self.SURCHARGE_RATE
-            total_cost += surcharge_amount
-            surcharge_applied = True
-            print(f"NOTIFICACIÓN: Se aplicó un recargo del {self.SURCHARGE_RATE * 100}% por '{self.SURCHARGE_FEATURE}'. Recargo: ${surcharge_amount:.2f}")
-
-        # 4. Aplicar Descuento Grupal (Group Discount 10%) (Requisito 5)
-        if apply_group_discount:
-            discount_amount = total_cost * self.GROUP_DISCOUNT_RATE
-            total_cost -= discount_amount
-            print(f"NOTIFICACIÓN: Se aplicó un {self.GROUP_DISCOUNT_RATE * 100}% de descuento grupal. Ahorro: ${discount_amount:.2f}")
-
-        # 5. Aplicar Descuento Fijo Adicional de $20.00
-        # Se aplica en dos casos:
-        # - 2-3 miembros (siempre)
-        # - 4+ miembros SOLO si hay recargo (surcharge_applied)
-        if (num_members >= 2 and num_members <= 3) or (num_members >= 4 and surcharge_applied):
-            fixed_discount = self.FIXED_GROUP_DISCOUNT
-            total_cost -= fixed_discount
-            if apply_group_discount:
-                print(f"NOTIFICACIÓN: Se aplicó un descuento fijo adicional de ${fixed_discount:.2f}.")
-            else:
-                print(f"NOTIFICACIÓN: Se aplicó un descuento fijo adicional de ${fixed_discount:.2f} por ser membresía de 2-3 miembros.")
-            
-        # 6. Salida Final y Redondeo
-        return int(total_cost + 0.5)
+        # 6. Output (Requisito 9) - Positive integer
+        final_cost = int(total_cost + 0.5)
+        return final_cost if final_cost > 0 else 0
