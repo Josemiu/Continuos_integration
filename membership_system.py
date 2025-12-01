@@ -7,27 +7,27 @@ class MembershipManager:
     Manages gym membership costs, additional features, and discounts.
     """
     # pylint: disable=too-few-public-methods
-    
+
     PLAN_COSTS = {
         "basic": 50,
         "premium": 100,
         "family": 150
     }
-    
+
     FEATURE_COSTS = {
         "personal_training": 35,
         "group_classes": 20,
         "specialized_training": 50,
         "exclusive_access": 40
     }
-    
+
     # Premium features that trigger a surcharge
     PREMIUM_FEATURES = {"specialized_training", "exclusive_access"}
     SURCHARGE_RATE = 0.15
-    
+
     GROUP_DISCOUNT_RATE = 0.10
     GROUP_MIN_MEMBERS = 2
-    
+
     # Special offers thresholds and discounts
     SPECIAL_OFFERS = [
         (400, 50),  # If > 400, discount 50
@@ -49,7 +49,7 @@ class MembershipManager:
         # 1. Validation
         if num_members <= 0:
             return -1
-        
+
         if plan not in self.PLAN_COSTS:
             return -1
 
@@ -60,7 +60,7 @@ class MembershipManager:
         # 2. Base Cost Calculation
         base_cost = self.PLAN_COSTS[plan]
         features_cost = sum(self.FEATURE_COSTS[f] for f in features)
-        
+
         # Total per group before discounts/surcharges
         total_cost = (base_cost + features_cost) * num_members
 
@@ -83,7 +83,7 @@ class MembershipManager:
             if total_cost > threshold:
                 discount_to_apply = discount
                 break # Apply only the highest applicable discount
-        
+
         total_cost -= discount_to_apply
 
         # 6. Output (Requisito 9) - Positive integer

@@ -23,8 +23,8 @@ jobs:
           python-version: '3.x'
 
       # 3. Instalar dependencias del Linter
-      - name: Install Pylint
-        run: pip install pylint # Comando para instalar el linter
+      - name: Install Pylint and Test Dependencies
+        run: pip install pylint pytest # Instala pylint y pytest
 
       # 4. Ejecutar el Linter
       - name: Analyzing the code with pylint
